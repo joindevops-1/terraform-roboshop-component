@@ -1,6 +1,6 @@
-variable "component" {
+/* variable "component" {
     type = string
-}
+} */
 
 /* variable "health_check_path" {
     default = "/health"
