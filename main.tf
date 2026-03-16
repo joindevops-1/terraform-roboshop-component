@@ -57,7 +57,7 @@ resource "aws_ami_from_instance" "main" {
 
 resource "aws_lb_target_group" "main" {
   name     = "${var.project}-${var.environment}-${var.component}"
-  port     = var.port_number
+  port     = local.port_number
   protocol = "HTTP"
   vpc_id   = local.vpc_id
   deregistration_delay = 60
@@ -66,8 +66,8 @@ resource "aws_lb_target_group" "main" {
     healthy_threshold = 2
     interval = 10
     matcher = "200-299"
-    path = var.health_check_path
-    port = var.port_number
+    path = local.health_check_path
+    port = local.port_number
     protocol = "HTTP"
     timeout = 2
     unhealthy_threshold = 3
@@ -180,7 +180,7 @@ resource "aws_autoscaling_policy" "main" {
 
 # This depends on target group
 resource "aws_lb_listener_rule" "main" {
-  listener_arn = local.backend_alb_listener_arn
+  listener_arn = local.listener_arn
   priority     = var.rule_priority
 
   action {
@@ -190,7 +190,7 @@ resource "aws_lb_listener_rule" "main" {
 
   condition {
     host_header {
-      values = ["${var.component}.backend-alb-${var.environment}.${var.domain_name}"]
+      values = [local.host_context]
     }
   }
 }
